@@ -77,7 +77,7 @@ async fn create_record(domain: &str, ip: &str) -> Result<(), Box<dyn std::error:
 
     // println!("{}",json_body);
     let ehe = reqwest::Client::new();
-    let resp = ehe.post("https://api.cloudflare.com/client/v4/zones/5812bfed4a88c24c49cbced7503316c5/dns_records")
+    let resp = ehe.post("https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records")
         .headers(kepala)
         .body(json_body)
         .send()
