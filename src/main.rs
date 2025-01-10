@@ -59,10 +59,10 @@ async fn get_domain_detail(zone_id_env: String, record_id_env: String, email_env
     Ok(())
 }
 
-async fn _create_record(domain: &str, ip: &str) -> Result<(), Box<dyn std::error::Error>>{
+async fn _create_record(domain: &str, ip: &str,zone_id_env: String, email_env: String, auth_key_env: String) -> Result<(), Box<dyn std::error::Error>>{
     let mut kepala = HeaderMap::new();
-    kepala.insert("X-Auth-Email","your-email".parse().unwrap());
-    kepala.insert("X-Auth-Key","your-auth-key".parse().unwrap());
+    kepala.insert("X-Auth-Email",email_env.parse().unwrap());
+    kepala.insert("X-Auth-Key",auth_key_env.parse().unwrap());
     kepala.insert("Content-Type","application/json".parse().unwrap());
 
     let ip_to_pass=ip;
@@ -89,7 +89,8 @@ async fn _create_record(domain: &str, ip: &str) -> Result<(), Box<dyn std::error
 
     // println!("{}",json_body);
     let ehe = reqwest::Client::new();
-    let resp = ehe.post("https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records")
+    let url = format!("https://api.cloudflare.com/client/v4/zones/{}/dns_records", zone_id_env);
+    let resp = ehe.post(url)
         .headers(kepala)
         .body(json_body)
         .send()
