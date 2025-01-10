@@ -1,6 +1,8 @@
 use reqwest::{header::HeaderMap};
 use serde_json::{Value, json};
 use clap::Parser;
+use dotenv::dotenv;
+use std::env;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -17,22 +19,31 @@ struct Args {
 // tokio let's us use "async" on our main function
 #[tokio::main]
 async fn main(){
+    dotenv().ok();
+    let zone_id = env::var("ZONE_ID").unwrap().to_string();
+    let email = env::var("EMAIL").unwrap().to_string();
+    let auth_key =env::var("AUTH_KEY").unwrap().to_string();
+    let record_id =env::var("RECORD_ID").unwrap().to_string();
 
-    let args = Args::parse();
-
-    let domain = args.domain;
-    let ip = args.ip;
-    let _ = create_record(&domain,&ip).await.expect("oops 2");
+    // let args = Args::parse();
+    // let domain = args.domain;
+    // let ip = args.ip;
+    // let _ = create_record(&domain,&ip).await.expect("oops 2");
+    get_domain_detail(zone_id, record_id, email, auth_key).await.expect("set the zone id inside .env to make this work");
 }
 // #[tokio::main]
-async fn get_domain_detail() -> Result<(), Box<dyn std::error::Error>>{
+async fn get_domain_detail(zone_id_env: String, record_id_env: String, email_env: String, auth_key_env: String) -> Result<(), Box<dyn std::error::Error>>{
     let mut kepala = HeaderMap::new();
-    kepala.insert("X-Auth-Email","your-email".parse().unwrap());
-    kepala.insert("X-Auth-Key","your-auth-key".parse().unwrap());
-
+    kepala.insert("X-Auth-Email",email_env.parse().unwrap());
+    kepala.insert("X-Auth-Key",auth_key_env.parse().unwrap());
 
     let ehe = reqwest::Client::new();
-    let resp = ehe.get("https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID")
+    let url = format!("https://api.cloudflare.com/client/v4/zones/{}/dns_records/{}", zone_id_env, record_id_env);
+    
+    // Test env output here 
+    println!("{}", url);
+    
+    let resp = ehe.get(url)
         .headers(kepala)
         .send()
         .await?
@@ -41,13 +52,14 @@ async fn get_domain_detail() -> Result<(), Box<dyn std::error::Error>>{
 
 
     let json: serde_json::Value =serde_json::from_str(&resp)?;
-    let _zone_id = json.get("result").and_then(|value| value.get("id"));
+    // test get value of json using specific field
+    // let _zone_id = json.get("result").and_then(|value| value.get("id"));
 
     print!("{}",json);
     Ok(())
 }
 
-async fn create_record(domain: &str, ip: &str) -> Result<(), Box<dyn std::error::Error>>{
+async fn _create_record(domain: &str, ip: &str) -> Result<(), Box<dyn std::error::Error>>{
     let mut kepala = HeaderMap::new();
     kepala.insert("X-Auth-Email","your-email".parse().unwrap());
     kepala.insert("X-Auth-Key","your-auth-key".parse().unwrap());
