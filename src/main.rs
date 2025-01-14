@@ -29,7 +29,9 @@ async fn main(){
     // let domain = args.domain;
     // let ip = args.ip;
     // let _ = create_record(&domain,&ip).await.expect("oops 2");
-    get_domain_detail(zone_id, record_id, email, auth_key).await.expect("set the zone id inside .env to make this work");
+    // get_domain_detail(zone_id, record_id, email, auth_key).await.expect("set the zone id inside .env to make this work");
+
+    println!("{:?}","done");
 }
 // #[tokio::main]
 async fn get_domain_detail(zone_id_env: String, record_id_env: String, email_env: String, auth_key_env: String) -> Result<(), Box<dyn std::error::Error>>{
