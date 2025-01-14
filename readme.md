@@ -20,7 +20,7 @@ But sometimes you may need to set your build target. I'am using linux btw
 
 
 ### TO DO
-- make domain/zone is swichable via serde_json
-- formatting output for dns list/record list
-- add some other flags for specifying ssl, comment etc. 
-- Set or get config via config or env file
+- [] make domain/zone is swichable via serde_json
+- [] formatting output for dns list/record list
+- [] Set or get config via config or env file
+- [] Using TUI instead of CLI
